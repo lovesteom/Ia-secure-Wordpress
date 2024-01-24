@@ -36,3 +36,30 @@ function bloquer_adresse_ip() {
     $htaccess_content = "deny from $user_ip\n";
     file_put_contents(ABSPATH . '.htaccess', $htaccess_content, FILE_APPEND);
 }
+
+
+// Hook pour ajouter une page au menu d'administration
+add_action('admin_menu', 'ajouter_page_admin_mon_plugin');
+
+function ajouter_page_admin_mon_plugin() {
+    add_menu_page(
+        'Mon Plugin',
+        'Mon Plugin',
+        'manage_options',
+        'mon-plugin-admin',
+        'afficher_page_admin_mon_plugin'
+    );
+}
+
+function afficher_page_admin_mon_plugin() {
+    // Exemple : Afficher une page avec les journaux d'activité
+    echo '<div class="wrap">';
+    echo '<h2>Journal d\'activité de Mon Plugin</h2>';
+    
+    // Vous pouvez personnaliser cette partie pour afficher les journaux ou les paramètres de votre plugin
+    // Exemple : Lire et afficher le contenu du fichier de journal
+    $log_content = file_get_contents(dirname(__FILE__) . '/connexion_logs.txt');
+    echo '<pre>' . esc_html($log_content) . '</pre>';
+
+    echo '</div>';
+}
