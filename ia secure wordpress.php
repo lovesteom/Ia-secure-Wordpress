@@ -52,6 +52,18 @@ function ajouter_page_admin_mon_plugin() {
 }
 
 function afficher_page_admin_mon_plugin() {
+
+    <div class="wrap">
+        <h2>Configuration de Mon Plugin</h2>
+        <form method="post" action="options.php">
+            <?php
+                settings_fields('mon_plugin_options');
+                do_settings_sections('mon_plugin_options');
+                submit_button();
+            ?>
+        </form>
+    </div>
+    <?php 
     // Exemple : Afficher une page avec les journaux d'activité
     echo '<div class="wrap">';
     echo '<h2>Journal d\'activité de Mon Plugin</h2>';
@@ -62,4 +74,36 @@ function afficher_page_admin_mon_plugin() {
     echo '<pre>' . esc_html($log_content) . '</pre>';
 
     echo '</div>';
+}
+
+
+
+add_action('admin_init', 'initialiser_options_mon_plugin');
+
+function initialiser_options_mon_plugin() {
+    register_setting('mon_plugin_options', 'mon_plugin_options');
+
+    add_settings_section(
+        'section_id',
+        'Section de configuration',
+        'afficher_section',
+        'mon_plugin_options'
+    );
+
+    add_settings_field(
+        'champ_id',
+        'Champ de configuration',
+        'afficher_champ',
+        'mon_plugin_options',
+        'section_id'
+    );
+}
+
+function afficher_section() {
+    echo '<p>Une description de la section.</p>';
+}
+
+function afficher_champ() {
+    $options = get_option('mon_plugin_options');
+    echo '<input type="text" name="mon_plugin_options[champ_id]" value="' . esc_attr($options['champ_id']) . '" />';
 }
