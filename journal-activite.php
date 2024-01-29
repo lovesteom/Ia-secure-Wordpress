@@ -2,9 +2,9 @@
 // Code spécifique à la fonctionnalité du journal d'activité
 function afficher_journal_activite() {
     echo '<div class="wrap">';
-    echo '<h2>Journal d\'activité de Mon Plugin</h2>';
+    echo '<h2>Journal d\'activité de utilisateurs</h2>';
 
-    // Exemple : Récupérer les données du journal (à adapter selon votre logique de stockage)
+    // Récupérer les logs d'activité
     $logs = obtenir_logs_activite();
 
     // Afficher le tableau si des logs existent
@@ -30,12 +30,25 @@ function afficher_journal_activite() {
     echo '</div>';
 }
 
-// Exemple de fonction pour récupérer les logs d'activité (à adapter selon votre logique de stockage)
+// Fonction pour enregistrer les logs d'activité lors de la connexion
+function enregistrer_log_activite($user_login, $user) {
+    // Récupérer les données nécessaires
+    $utilisateur = $user->user_login;
+    $role = reset($user->roles); // Prendre le premier rôle de l'utilisateur
+    $date_heure = current_time('mysql');
+    $action = 'Connexion';
+
+    // Enregistrer les données dans vos options ou base de données (à adapter selon vos besoins)
+    $logs = obtenir_logs_activite();
+    $logs[] = array('utilisateur' => $utilisateur, 'role' => $role, 'date_heure' => $date_heure, 'action' => $action);
+    update_option('logs_activite_option', $logs);
+}
+
+// Action pour enregistrer les logs lors de la connexion
+add_action('wp_login', 'enregistrer_log_activite', 10, 2);
+
+// Fonction pour récupérer les logs d'activité
 function obtenir_logs_activite() {
-    // Dans cet exemple, retourner un tableau statique. Vous devrez implémenter cette fonction en fonction de votre système de stockage réel.
-    return array(
-        array('utilisateur' => 'John Doe', 'role' => 'Éditeur', 'date_heure' => '2022-02-01 14:30:00', 'action' => 'Connexion'),
-        array('utilisateur' => 'Jane Smith', 'role' => 'Administrateur', 'date_heure' => '2022-02-02 09:45:00', 'action' => 'Modification d\'article'),
-        // Ajoutez d'autres entrées en fonction de vos besoins
-    );
+    // Récupérer les logs d'activité (à adapter selon votre logique de stockage)
+    return get_option('logs_activite_option', array());
 }
