@@ -1,4 +1,6 @@
 <?php
+
+//COde fonctionnelle mais revoir les bugs dans wordpress 
 // Code spécifique à la fonctionnalité du journal d'activité
 function afficher_journal_activite() {
     echo '<div class="wrap">';
