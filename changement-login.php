@@ -11,116 +11,26 @@ function afficher_changement_login() {
             <input type="text" name="nouvelle_url_login" id="nouvelle_url_login" required />
             <input type="submit" name="submit_nouvelle_url" class="button-primary" value="Enregistrer" />
         </form>
-
-        <?php
-        // Traiter la soumission du formulaire
-        if (isset($_POST['submit_nouvelle_url'])) {
-            // Vérifier la nonce
-            if (isset($_POST['changement_login_nonce']) && wp_verify_nonce($_POST['changement_login_nonce'], 'changement_login')) {
-                // Récupérer la nouvelle URL saisie
-                $nouvelle_url_login = esc_url_raw($_POST['nouvelle_url_login']);
-
-                // Valider et enregistrer la nouvelle URL (à adapter selon vos besoins)
-                if (filter_var($nouvelle_url_login, FILTER_VALIDATE_URL)) {
-                    // Enregistrez la nouvelle URL dans vos options ou base de données
-                    update_option('nouvelle_url_login_option', $nouvelle_url_login);
-
-                    // Enregistrez l'historique du changement
-                    enregistrer_historique_changement($nouvelle_url_login);
-        // Dans la fonction afficher_changement_login après la mise à jour de l'option
-        if (filter_var($nouvelle_url_login, FILTER_VALIDATE_URL)) {
-            // Enregistrez la nouvelle URL dans vos options ou base de données
-            update_option('nouvelle_url_login_option', $nouvelle_url_login);
-
-            // Supprimer les filtres si l'utilisateur revient à l'URL par défaut
-            if (empty($nouvelle_url_login)) {
-                remove_filter('login_url', 'filtrer_url_connexion', 10);
-                remove_filter('admin_url', 'filtrer_url_admin', 10);
-            }
-
-            // Enregistrez l'historique du changement
-            enregistrer_historique_changement($nouvelle_url_login);
-
-            echo '<div class="updated"><p>Nouvelle URL de connexion enregistrée avec succès.</p></div>';
-        } else {
-            echo '<div class="error"><p>URL invalide. Veuillez saisir une URL valide.</p></div>';
-        }
-
-                    echo '<div class="updated"><p>Nouvelle URL de connexion enregistrée avec succès.</p></div>';
-                } else {
-                    echo '<div class="error"><p>URL invalide. Veuillez saisir une URL valide.</p></div>';
-                }
-            } else {
-                // Nonce non valide, traitement d'une tentative d'exploitation
-                wp_die('Erreur de sécurité. Veuillez réessayer.');
-            }
-        }
-
-     
-
-        // Afficher l'historique des changements
-        afficher_historique_changements();
-        ?>
-    </div>
-    <?php
-
-
-}
-
-
-// Ajoutez ceci dans votre fichier principal (mon-plugin.php ou autre)
-add_filter('login_url', 'filtrer_url_connexion', 10, 2);
-add_filter('admin_url', 'filtrer_url_admin', 10, 2);
-
-function filtrer_url_connexion($login_url, $redirect) {
-    $nouvelle_url_login = get_option('nouvelle_url_login_option', ''); // Récupérer la nouvelle URL
-    if (!empty($nouvelle_url_login)) {
-        $login_url = esc_url_raw($nouvelle_url_login);
+<?php
     }
-    return $login_url;
+
+// Définir les constantes
+define( 'MON_PLUGIN_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'MON_PLUGIN_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
+
+// Fonction de redirection de redirection de tous url wp-admin vers la page 404 
+function mon_plugin_rediriger_wp_admin() {
+
+  // Vérifier si l'URL contient "wp-admin"
+  if ( strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) !== false ) {
+
+    // Rediriger vers la page 404
+    wp_redirect( home_url( '/404' ) );
+    exit;
+
+  }
+
 }
 
-function filtrer_url_admin($url, $path) {
-    $nouvelle_url_login = get_option('nouvelle_url_login_option', ''); // Récupérer la nouvelle URL
-    if (!empty($nouvelle_url_login)) {
-        $parsed_home_url = parse_url(home_url());
-        $url = $parsed_home_url['scheme'] . '://' . $parsed_home_url['host'] . $path;
-        $url = str_replace(home_url(), esc_url_raw($nouvelle_url_login), $url);
-    }
-    return $url;
-}
-
-
-
-// Fonction pour enregistrer l'historique du changement d'URL
-function enregistrer_historique_changement($nouvelle_url) {
-    $historique_changements = get_option('historique_changements_option', array());
-    $historique_changements[] = array(
-        'url' => $nouvelle_url,
-        'date' => current_time('mysql'),
-        'utilisateur' => get_current_user_id(),
-    );
-    update_option('historique_changements_option', $historique_changements);
-}
-
-// Fonction pour afficher l'historique des changements
-function afficher_historique_changements() {
-    $historique_changements = get_option('historique_changements_option', array());
-
-    if (!empty($historique_changements)) {
-        echo '<h3>Historique des Changements d\'URL</h3>';
-        echo '<table class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><th>URL</th><th>Date</th><th>Changé par Utilisateur</th></tr></thead>';
-        echo '<tbody>';
-
-        foreach ($historique_changements as $changement) {
-            echo '<tr>';
-            echo '<td>' . esc_html($changement['url']) . '</td>';
-            echo '<td>' . esc_html($changement['date']) . '</td>';
-            echo '<td>' . esc_html($changement['utilisateur']) . '</td>';
-            echo '</tr>';
-        }
-
-        echo '</tbody></table>';
-    }
-}
+// Ajouter une action pour rediriger les liens "wp-admin"
+add_action( 'init', 'mon_plugin_rediriger_wp_admin' );
