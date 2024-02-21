@@ -15,19 +15,26 @@ function afficher_changement_login() {
     }
 // Globale : Fonction de redirection de redirection de tous url wp-admin vers la page 404 
 // Définir les constantes
+
 define( 'MON_PLUGIN_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MON_PLUGIN_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
 
 // Fonction de redirection de redirection de tous url wp-admin vers la page 404 
+
+/* A faire en urgence ; mettre une condition dans la redirection pour 
+quand l'utilisateur est connecté, ne plus faire la redirection.
+si l'utilisateur n'est pas connecter => rediriger 'wp-admin' vers la page 404 */
 function mon_plugin_rediriger_wp_admin() {
 
   // Vérifier si l'URL contient "wp-admin"
   if ( strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) !== false ) {
 
-    // Rediriger vers la page 404
-    wp_redirect( home_url( '/404' ) );
-    exit;
-
+    //vérifie si l'utilisateur n'est pas connecté 
+    if ( ! is_user_logged_in() ) {
+        // Rediriger vers la page 404
+        wp_redirect( home_url( '/404' ) );
+        exit;
+    }
   }
 
 }
