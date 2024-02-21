@@ -13,7 +13,7 @@ function afficher_changement_login() {
         </form>
 <?php
     }
-
+// Globale : Fonction de redirection de redirection de tous url wp-admin vers la page 404 
 // Définir les constantes
 define( 'MON_PLUGIN_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MON_PLUGIN_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
