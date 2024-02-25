@@ -38,6 +38,56 @@ function mon_plugin_rediriger_wp_admin() {
   }
 
 }
-
+$slugs_change='om';
+$slugs_valide=$slugs_change.'.php';
 // Ajouter une action pour rediriger les liens "wp-admin"
 add_action( 'init', 'mon_plugin_rediriger_wp_admin' );
+
+
+//Sur cette partie, faire en sorte que quand le changement est fait une fois de plus le faire ou de faire une vérification de fichier << si wp-login.php existe renomé le ficher
+rename("C:/xampp/htdocs/tera/wp-login.php", "C:/xampp/htdocs/tera/$slugs_valide");
+
+
+$chemin_fichier= "C:/xampp/htdocs/tera/$slugs_valide";
+$mot_a_remplacer="wp-login.php";
+$nouveau_mot=$slugs_valide;
+
+
+function remplacer_mot_dans_fichier($chemin_fichier, $mot_a_remplacer, $nouveau_mot) {
+  // Ouvrir le fichier en mode lecture
+  if (!$handle = fopen($chemin_fichier, 'r')) {
+      return 'Impossible d\'ouvrir le fichier';
+  }
+
+  // Lire le contenu du fichier
+  $contenu_fichier = fread($handle, filesize($chemin_fichier));
+
+  // Fermer le fichier
+  fclose($handle);
+
+  // Remplacer chaque occurrence du mot à remplacer par le nouveau mot
+  $contenu_fichier_modifie = str_replace($mot_a_remplacer, $nouveau_mot, $contenu_fichier);
+
+  // Ouvrir le fichier en mode écriture
+  if (!$handle = fopen($chemin_fichier, 'w')) {
+      return 'Impossible d\'ouvrir le fichier';
+  }
+
+  // Écrire le contenu modifié dans le fichier
+  if (fwrite($handle, $contenu_fichier_modifie) === FALSE) {
+      return 'Impossible d\'écrire dans le fichier';
+  }
+
+  // Fermer le fichier
+  fclose($handle);
+
+  return 'Le remplacement a été effectué avec succès.';
+}
+
+// Utilisation de la fonction avec le chemin vers le fichier et les mots à remplacer
+$chemin_fichier = 'chemin_vers_votre_fichier.txt';
+$mot_a_remplacer = 'ZZZ';
+$nouveau_mot = 'AAA';
+
+$resultat = remplacer_mot_dans_fichier($chemin_fichier, $mot_a_remplacer, $nouveau_mot);
+echo $resultat;
