@@ -51,8 +51,6 @@ rename("C:/xampp/htdocs/tera/wp-login.php", "C:/xampp/htdocs/tera/$slugs_valide"
 $chemin_fichier= "C:/xampp/htdocs/tera/$slugs_valide";
 $mot_a_remplacer="wp-login.php";
 $nouveau_mot=$slugs_valide;
-
-
 function remplacer_mot_dans_fichier($chemin_fichier, $mot_a_remplacer, $nouveau_mot) {
   // Ouvrir le fichier en mode lecture
   if (!$handle = fopen($chemin_fichier, 'r')) {
