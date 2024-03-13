@@ -10,7 +10,7 @@ Author: LovesteOm
 
 
 // Charger TensorFlow
-require_once '/chemin/vers/votre/tensorflow/autoload.php';
+//require_once '/chemin/vers/votre/tensorflow/autoload.php';
 
 // Inclure les fichiers des fonctionnalités
 include_once plugin_dir_path(__FILE__) . 'journal-activite.php';
@@ -54,7 +54,7 @@ function ajouter_page_admin_mon_plugin() {
 
 
 function afficher_page_admin_mon_plugin() {
-
+?>
     <div class="wrap">
         <h2>Configuration de Mon Plugin</h2>
         <form method="post" action="options.php">

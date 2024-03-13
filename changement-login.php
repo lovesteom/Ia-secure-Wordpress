@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Récupérer la valeur du champ de texte
         $slugs_change = $_POST["searchText"];
         
-        function chargeur();
+         chargeur();
         
     } else {
         // Si le champ de texte est vide, afficher un message d'erreur
